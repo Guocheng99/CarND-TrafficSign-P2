@@ -1,10 +1,8 @@
 #**Traffic Sign Recognition** 
 
-##Writeup Template
-
-###You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
 ---
+## Goal
+
 
 **Build a Traffic Sign Recognition Project**
 
@@ -16,19 +14,42 @@ The goals / steps of this project are the following:
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
+---
+## Refelction
 
-[//]: # (Image References)
+### 1. Data Analysis and Preprocess
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+####Analysis
 
-## Rubric Points
+The dataset consists of 34,799 32×32 pixels color images (32×32×3 array of RGB values) used for training, and 4410 images for cross validation, and 12,630 images that will be used for testing. Each image is a photo of a traffic sign belonging to one of 43 classes (marked as an integer [0,42]).
+
+<img src="output/data_samples.png" width="480" alt="Traffic Sign Data Samples" />
+
+The training data distribution of all the 43 classes are totally unbalanced, nearly half of the classes have less than 500 sample data.
+
+<img src="output/data_distribution.png" width="480" alt="Data Distribution" />
+
+####Preprocess
+
+**Augmentation**
+
+To tackle the problem of unbalanced distribution, I used the idea from [this post](https://navoshta.com/traffic-signs-classification/). Firstly flipping, then transformation(rotation/projection).
+
+**Flipping**
+
+The idea is that we can extend the dataset by flipping for some traffic signs.
+
+<img src="output/flipping1.png" width="480" alt="Data Distribution" />
+<img src="output/flipping2.png" width="480" alt="Data Distribution" />
+<img src="output/flipping3.png" width="480" alt="Data Distribution" />
+
+After flipping, the training data set has been extended to **59,788**. 
+
+**Transformation (Rotation/Projection)**
+
+Then The system will randomly pick one of the 4 transformations applied to 
+
+
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
 ---
