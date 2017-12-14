@@ -16,67 +16,223 @@ The goals / steps of this project are the following:
 
 ---
 ## Refelction
+Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.
 
-### 1. Data Analysis and Preprocess
+### 1. Data Set Summary & Exploration
 
-####Analysis
-
+#### Basic summary of the data set
 The dataset consists of 34,799 32×32 pixels color images (32×32×3 array of RGB values) used for training, and 4410 images for cross validation, and 12,630 images that will be used for testing. Each image is a photo of a traffic sign belonging to one of 43 classes (marked as an integer [0,42]).
+
+I used the pandas and numpy to calculate summary statistics of the traffic signs data set:
+
+* The size of training set is **34,799**
+* The size of the validation set is **4,410**
+* The size of test set is **12,630**
+* The shape of a traffic sign image is **(32,32,3)**
+* The number of unique classes/labels in the data set is **43**
+
 
 <img src="output/data_samples.png" width="480" alt="Traffic Sign Data Samples" />
 
-The training data distribution of all the 43 classes are totally unbalanced, nearly half of the classes have less than 500 sample data.
+####Visualization of the dataset
 
-<img src="output/data_distribution.png" width="480" alt="Data Distribution" />
+Here are some traffic sign image samples.
 
-####Preprocess
+<img src="output/image_sample.png" width="640" alt="Traffic Sign Data Samples" />
 
-**Augmentation**
+However, the training data distribution of all the 43 classes are totally unbalanced, nearly half of the classes have less than 500 sample data.
+
+<img src="output/data_distribution.png" width="320" alt="Data Distribution" />
+
+### 2. Data Augmentation
 
 To tackle the problem of unbalanced distribution, I used the idea from [this post](https://navoshta.com/traffic-signs-classification/). Firstly flipping, then transformation(rotation/projection).
 
 **Flipping**
 
-The idea is that we can extend the dataset by flipping for some traffic signs.
+The idea is that we can extend the dataset by flipping for some traffic signs (Images are from the post mentioned above).
 
-<img src="output/flipping1.png" width="480" alt="Data Distribution" />
-<img src="output/flipping2.png" width="480" alt="Data Distribution" />
-<img src="output/flipping3.png" width="480" alt="Data Distribution" />
+<img src="output/flipping1.png" width="320" alt="Flipping" />
+<img src="output/flipping2.png" width="320" alt="Flipping" />
+<img src="output/flipping3.png" width="320" alt="Flipping" />
 
 After flipping, the training data set has been extended to **59,788**. 
 
-**Transformation (Rotation/Projection)**
+**Transformation**
 
-Then The system will randomly pick one of the 4 transformations applied to 
+Several image transforming techniques can be applied to the traffic sign images to extend the data set. These techniques are: 
+
+* Scaling
+* Translation
+* Rotation
+* Projection
+
+Here is the example.
+
+<img src="output/image_transform.png" width="640" alt="Image Transformation" />
+
+I randomly choose these techniques to extend each class to **12,000** images. The training dataset now has **516K** images (12,000 x 43).
+
+###3. Pre-processing
+
+I got the idea from a [Udacity Discussion Post](https://discussions.udacity.com/t/train-valid-test-image-processing/401452/8)
+
+* **Equalization on Y Channel**
+* **CLAHE**
+* **Normalization**
+
+Here is the example.
+
+<img src="output/proprecess.png" width="480" alt="Image Transformation" />
+
+###4. Model Architecture
+
+I started with the simple model - LeNet5, 
+
+ 
+####Model 1 - LeNet5
+
+| Layer         		|     Description	    | 
+|:-----------------:|:---------------------:| 
+| Input         		| 32x32x3 RGB image | 
+| Convolution 5x5   | 1x1 stride, VALID padding, outputs 28x28x6 |
+| RELU					|						|
+| Max pooling	      	| 2x2 stride,  outputs 14x14x6 |
+| Convolution 5x5	| 1x1 stride, VALID padding, outputs 10x10x16 |
+| RELU					|						|
+| Max pooling	      	| 2x2 stride,  outputs 5x5x16 |
+| Flatten				| outputs 400			|
+| Fully connected	| outputs 120   		|
+| RELU					|						|
+| Fully connected	| outputs 84        |
+| RELU					|						|
+| Fully connected	| outputs 43			|
+
+####Model 2 - LeNet5 + Dropouts
+
+| Layer         		|     Description	    | 
+|:-----------------:|:---------------------:| 
+| Input         		| 32x32x3 RGB image | 
+| Convolution 5x5   | 1x1 stride, VALID padding, outputs 28x28x16 |
+| RELU					|						|
+| Max pooling	      	| 2x2 stride,  outputs 14x14x16 |
+| Dropout				| Keep = 0.9			|
+| Convolution 5x5	| 1x1 stride, VALID padding, outputs 10x10x64 |
+| RELU					|						|
+| Max pooling	      	| 2x2 stride,  outputs 5x5x64 |
+| Dropout				| Keep = 0.8			|
+| Flatten				| outputs 1600		|
+| Fully connected	| outputs 120   		|
+| RELU					|						|
+| Dropout				| Keep = 0.7			|
+| Fully connected	| outputs 84        |
+| RELU					|						|
+| Dropout				| Keep = 0.5			|
+| Fully connected	| outputs 43			|
+
+####Model 3 - Sermanet (Multi-Scale Features)
+
+| Layer         		|     Description	        | 
+|:---------------------:|:---------------------:| 
+| Input         		| 32x32x1 Grayscale image | 
+| Convolution 5x5   | 1x1 stride, SAME padding, outputs 32x32x16 |
+| RELU					|						|
+| Max pooling	      	| 2x2 stride,  outputs 16x16x16, name='pool1' |
+| Dropout				| Keep = 0.9			|
+| Convolution 5x5	| 1x1 stride, SAME padding, outputs 16x16x32 |
+| RELU					|						|
+| Max pooling	      	| 2x2 stride,  outputs 8x8x32, name='pool2' |
+| Dropout				| Keep = 0.8			|
+| Flatten				| input1 = 'pool1'->4x4x16, input2='pool2'->4x4x32  outputs 768|
+| Fully connected	| outputs 120   		|
+| RELU					|						|
+| Dropout				| Keep = 0.5			|
+| Fully connected	| outputs 43			|
+
+####Train the model
+
+* Epoches
+* Batch size
+* Learning rate
+* mean/sigma
+
+####Performance
+| Model         		|Training Accuracy| Validation Accuracy| Test Accuracy | 
+|:-----------------:|:------------------:|:-----------------:|:------------------:| 
+| LeNet5        		| %					 | |
+| LeNet5 + Dropouts | 100%				 |99.2% |98.3%
+| Sermanet (Multi-Scale Features)	|	100%| 99.0%|97.4%
+
+According to [Sermanet and LeCun's paper](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf), because of using multi-scale features, Sermanet should have **99%+** test accuracy, however I got slightly worse performance (compared to LeNet5 + Dropouts), I am still working on that. 
+
+###5. Test a Model on New Images
+  
+
+Manually corp the image to 32*32, and let the sign to be the center.
+
+<img src="output/web_image.png" width="480" alt="Image from web" />
+
+Here are the results of the prediction:
+
+| Image			        |     Prediction| 
+|:---------------------:|:---------------------------------------------:| 
+| s01-Yield      		| Yield		| 
+| s02-Road work     			| Road Work |
+| s03-Pedestrians					| Pedestrians|
+| s04-Children crossing	      	| Pedestrians|
+| s05-Ice			| Beware of ice/snow    |
 
 
-###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
+s01-Yield <img src="output/s01-yield.jpg" width="32" alt="Yield" />
 
----
-###Writeup / README
+| Probability         	|     Prediction	        | 
+|:---------------------:|:---------------------------------------------:| 
+| 1.00000         			| Yield   	| 
+| 0.00000     				| Priority road |
+| 0.00000					| Ahead only		|
+| 0.00000	      			| Keep right		|
+| 0.00000				    | No vechiles   |
 
-####1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
+s02-roadwork <img src="output/s02-roadwork.jpg" width="32" alt="Road work" />
 
-You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
+| Probability         	|     Prediction	        | 
+|:---------------------:|:---------------------------------------------:| 
+| 0.99992         			| Road work  	| 
+| 0.00002     				| Pedestrians |
+| 0.00002					| Bumpy road		|
+| 0.00001	      			| Beware of ice/snow|
+| 0.00001				    | Traffic signals   |
 
-###Data Set Summary & Exploration
+s03-Pedestrians <img src="output/s03-Pedestrians.jpg" width="32" alt="Pedestrians" />
 
-####1. Provide a basic summary of the data set. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
+| Probability         	|     Prediction	        | 
+|:---------------------:|:---------------------------------------------:| 
+| 0.99998         			| Pedestrians	| 
+| 0.00001     				| Road narrows on the right |
+| 0.00000					| Right-of-way at the next intersection|
+| 0.00000	      			| General caution|
+| 0.00000				    | Traffic signals   |
 
-I used the pandas library to calculate summary statistics of the traffic
-signs data set:
+s04-child <img src="output/s04-child.jpg" width="32" alt="Children crossing" />
 
-* The size of training set is ?
-* The size of the validation set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
+| Probability         	|     Prediction	        | 
+|:---------------------:|:---------------------------------------------:| 
+| 0.23990         			| Pedestrians	| 
+| 0.15284     				| Right-of-way at the next intersection|
+| 0.12924					| Traffic signals|
+| 0.07557	      			| General caution|
+| 0.06851				    | Children crossing   |
 
-####2. Include an exploratory visualization of the dataset.
+s05-ice <img src="output/s05-ice.jpg" width="32" alt="Beware of ice/snow" />
 
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
+| Probability         	|     Prediction	        | 
+|:---------------------:|:---------------------------------------------:| 
+| 0.99997         			| Beware of ice/snow| 
+| 0.00001     				| Right-of-way at the next intersection|
+| 0.00001					| Road work|
+| 0.00000	      			| Bicycles crossing|
+| 0.00000				    | Slippery road   |
 
-![alt text][image1]
 
 ###Design and Test a Model Architecture
 
@@ -105,17 +261,17 @@ The difference between the original data set and the augmented data set is the f
 
 My final model consisted of the following layers:
 
-| Layer         		|     Description	        					| 
+| Layer         		|     Description	        | 
 |:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
+| Input         		| 32x32x3 RGB image | 
+| Convolution 3x3   | 1x1 stride, same padding, outputs 32x32x64 |
+| RELU					|						|
+| Max pooling	      	| 2x2 stride,  outputs 16x16x64 |
+| Convolution 3x3	| etc.      			|
+| Fully connected	| etc.        		|
+| Softmax				| etc.        		|
+|						|						|
+|						|						|
  
 
 
