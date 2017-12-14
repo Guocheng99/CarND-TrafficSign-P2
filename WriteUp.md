@@ -62,10 +62,10 @@ After flipping, the training data set has been extended to **59,788**.
 
 Several image transforming techniques can be applied to the traffic sign images to extend the data set. These techniques are: 
 
-* Scaling
-* Translation
-* Rotation
-* Projection
+* **Scaling**
+* **Translation**
+* **Rotation**
+* **Projection**
 
 Here is the example.
 
@@ -75,13 +75,13 @@ I randomly choose these techniques to extend each class to **12,000** images. Th
 
 ###3. Pre-processing
 
-I got the idea from a [Udacity Discussion Post](https://discussions.udacity.com/t/train-valid-test-image-processing/401452/8)
+I got the pre-processing idea from a [Udacity Discussion Post](https://discussions.udacity.com/t/train-valid-test-image-processing/401452/8). I followed the following steps.
 
-* **Equalization on Y Channel**
+* **Grayscale and Equalization on Y Channel**
 * **CLAHE**
 * **Normalization**
 
-Here is the example.
+Here are the example results after each step.
 
 <img src="output/proprecess.png" width="480" alt="Image Transformation" />
 
@@ -130,7 +130,7 @@ I started with the simple model - LeNet5,
 | Dropout				| Keep = 0.5			|
 | Fully connected	| outputs 43			|
 
-####Model 3 - Sermanet (Multi-Scale Features)
+####Model 3 - Sermanet (Multi-Scale Features) - 2 convolution layers
 
 | Layer         		|     Description	        | 
 |:---------------------:|:---------------------:| 
@@ -149,30 +149,41 @@ I started with the simple model - LeNet5,
 | Dropout				| Keep = 0.5			|
 | Fully connected	| outputs 43			|
 
-####Train the model
+###5. Train the model
 
-* Epoches
-* Batch size
-* Learning rate
-* mean/sigma
+#### Hyperparameters
+* **Epoches:** 80~120
+* **Batch Size:** 128
+* **Learning Rate:** 0.0001
+* **Mean/Sigma:** 0/0.1
+* **Optimizer:** Adam Optimizer
+
+#### Validation Accuracy over epoches
+
+Sample: LeNet 5 - 80 epoches
+
+<img src="output/epoches.png" width="320" alt="Training" />
 
 ####Performance
 | Model         		|Training Accuracy| Validation Accuracy| Test Accuracy | 
 |:-----------------:|:------------------:|:-----------------:|:------------------:| 
-| LeNet5        		| %					 | |
-| LeNet5 + Dropouts | 100%				 |99.2% |98.3%
-| Sermanet (Multi-Scale Features)	|	100%| 99.0%|97.4%
+| LeNet5        		| 100%					 | 95.0%|94.3%|
+| LeNet5 + Dropouts | 100%				 |99.2% |98.3%|
+| Sermanet (Multi-Scale Features)	|	100%| 99.0%|97.4%|
 
-According to [Sermanet and LeCun's paper](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf), because of using multi-scale features, Sermanet should have **99%+** test accuracy, however I got slightly worse performance (compared to LeNet5 + Dropouts), I am still working on that. 
+According to [Sermanet and LeCun's paper](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf), Sermanet should have **99%+** test accuracy, because of using multi-scale features. However I got slightly worse performance (compared to LeNet5 + Dropouts), I am still working on that. 
 
-###5. Test a Model on New Images
-  
+###6. Test a Model on New Images
 
-Manually corp the image to 32*32, and let the sign to be the center.
+I used the best performance model (LeNet5 + Dropouts) to test on new images.  
+
+Firstly, I manually corp the 5 images to 32*32, and let the sign at the center.
 
 <img src="output/web_image.png" width="480" alt="Image from web" />
 
-Here are the results of the prediction:
+Then, I pre-processed the new images and used the trained model to make the predictions.
+
+I got 4 correct out of 5 (80%). Here are the results:
 
 | Image			        |     Prediction| 
 |:---------------------:|:---------------------------------------------:| 
@@ -182,8 +193,9 @@ Here are the results of the prediction:
 | s04-Children crossing	      	| Pedestrians|
 | s05-Ice			| Beware of ice/snow    |
 
+#### Top 5 probabilities for each image
 
-s01-Yield <img src="output/s01-yield.jpg" width="32" alt="Yield" />
+<img src="output/s01-yield.jpg" width="64" alt="Yield" />
 
 | Probability         	|     Prediction	        | 
 |:---------------------:|:---------------------------------------------:| 
@@ -193,7 +205,7 @@ s01-Yield <img src="output/s01-yield.jpg" width="32" alt="Yield" />
 | 0.00000	      			| Keep right		|
 | 0.00000				    | No vechiles   |
 
-s02-roadwork <img src="output/s02-roadwork.jpg" width="32" alt="Road work" />
+<img src="output/s02-roadwork.jpg" width="64" alt="Road work" />
 
 | Probability         	|     Prediction	        | 
 |:---------------------:|:---------------------------------------------:| 
@@ -203,7 +215,7 @@ s02-roadwork <img src="output/s02-roadwork.jpg" width="32" alt="Road work" />
 | 0.00001	      			| Beware of ice/snow|
 | 0.00001				    | Traffic signals   |
 
-s03-Pedestrians <img src="output/s03-Pedestrians.jpg" width="32" alt="Pedestrians" />
+<img src="output/s03-Pedestrians.jpg" width="64" alt="Pedestrians" />
 
 | Probability         	|     Prediction	        | 
 |:---------------------:|:---------------------------------------------:| 
@@ -213,7 +225,7 @@ s03-Pedestrians <img src="output/s03-Pedestrians.jpg" width="32" alt="Pedestrian
 | 0.00000	      			| General caution|
 | 0.00000				    | Traffic signals   |
 
-s04-child <img src="output/s04-child.jpg" width="32" alt="Children crossing" />
+<img src="output/s04-child.jpg" width="64" alt="Children crossing" />
 
 | Probability         	|     Prediction	        | 
 |:---------------------:|:---------------------------------------------:| 
@@ -223,7 +235,7 @@ s04-child <img src="output/s04-child.jpg" width="32" alt="Children crossing" />
 | 0.07557	      			| General caution|
 | 0.06851				    | Children crossing   |
 
-s05-ice <img src="output/s05-ice.jpg" width="32" alt="Beware of ice/snow" />
+<img src="output/s05-ice.jpg" width="64" alt="Beware of ice/snow" />
 
 | Probability         	|     Prediction	        | 
 |:---------------------:|:---------------------------------------------:| 
