@@ -71,23 +71,37 @@ Here is the example.
 
 <img src="output/image_transform.png" width="640" alt="Image Transformation" />
 
-I randomly choose these techniques to extend each class to **12,000** images. The training dataset now has **516K** images (12,000 x 43).
+I randomly choose these techniques to extend each class to **15,000** images. The training dataset now has **645K** images (15,000 x 43).
 
 ###3. Pre-processing
 
-I got the pre-processing idea from a [Udacity Discussion Post](https://discussions.udacity.com/t/train-valid-test-image-processing/401452/8). I followed the following steps.
+I got the pre-processing idea from a [Udacity Discussion Post](https://discussions.udacity.com/t/train-valid-test-image-processing/401452/8) and [Sermanet and LeCun's paper](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf). I used the following steps of processing.
 
 * **Grayscale and Equalization on Y Channel**
-* **CLAHE**
-* **Normalization**
+* **CLAHE** (Contrast Limited Adaptive Histogram Equalization)
+* **Normalization** normalize the value to **[-1,1]**
 
-Here are the example results after each step.
+Here are the processing results after each step.
 
 <img src="output/proprecess.png" width="480" alt="Image Transformation" />
 
+I found the pre-processing techniques very helpful to train the model.
+
 ###4. Model Architecture
 
-I started with the simple model - LeNet5, 
+####Summary
+* I used 3 different models for the traffic sign classifier: LeNet5, LeNet5 + Dropouts, and Sermanet.
+* With the extended dataset and LeNet5, I got 95.0% for validation accuracy and 94.3% for test accuracy respectively. 
+* Then I tried to add 4 Dropouts in each convolution layers and fully connected layers. I set the keep rates to 0.9, 0.8, 0.7 and 0.5. And also, I added more filters in each layer.
+
+	| Layer     |     Filters | Keep Rate
+	|:---------:|:-----------:|:-----------:| 
+	| conv_1    | 6 --> 16 | 0.9|
+	| conv-2    | 16 --> 64 | 0.8|
+	| FC_1		  |	 400 --> 1600	 | 0.7|
+	| FC_2	|  | 0.5|
+* Inspired by [Sermanet and LeCun's paper](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf), I created a 2 convolution layers Sermanet. The major point is that both the 2 convolution layers outputs will be fed into the fully connected layer (multi-scale features).
+<img src="output/sermanet.png" width="480" alt="Image Transformation" />
 
  
 ####Model 1 - LeNet5
@@ -153,23 +167,35 @@ I started with the simple model - LeNet5,
 
 #### Hyperparameters
 * **Epoches:** 80~120
-* **Batch Size:** 128
-* **Learning Rate:** 0.0001
+* **Batch Size:** 128/256
+* **Learning Rate:** 0.001/0.0001
 * **Mean/Sigma:** 0/0.1
 * **Optimizer:** Adam Optimizer
 
-#### Validation Accuracy over epoches
+#### Training
+I used 2-stage training to train and fine tune the model.
 
-Sample: LeNet 5 - 80 epoches
+* **Stage 1: Train with big step.** Find the highest validation accuracy in the first 40~60 epochs, with learning rate 0.001 and Adam Optimizer. Save the model for the next stage.
 
-<img src="output/epoches.png" width="320" alt="Training" />
+<img src="output/epochs-1.png" width="480" alt="Training" />
+
+* **Stage 2: Fine tuning with small step.** Use another 40~60 epochs with learning rate = 0.0001 
+
+<img src="output/epochs-2.png" width="480" alt="Training" />
+
+**Tips:**
+
+* **Shuffle** the training data at the beginning of each epoch.
+* **DO NOT** call tf.global_variables_initializer() at the stage 2 when use loaded model to continue training.
+
+
 
 ####Performance
 | Model         		|Training Accuracy| Validation Accuracy| Test Accuracy | 
 |:-----------------:|:------------------:|:-----------------:|:------------------:| 
 | LeNet5        		| 100%					 | 95.0%|94.3%|
 | LeNet5 + Dropouts | 100%				 |99.2% |98.3%|
-| Sermanet (Multi-Scale Features)	|	100%| 99.0%|97.4%|
+| Sermanet (Multi-Scale Features)	|	100%| 98.3%|97.4%|
 
 According to [Sermanet and LeCun's paper](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf), Sermanet should have **99%+** test accuracy, because of using multi-scale features. However I got slightly worse performance (compared to LeNet5 + Dropouts), I am still working on that. 
 
