@@ -1,4 +1,4 @@
-#**Traffic Sign Recognition** 
+# Traffic Sign Recognition
 
 ---
 ## Goal
@@ -34,7 +34,7 @@ I used the pandas and numpy to calculate summary statistics of the traffic signs
 
 <img src="output/data_samples.png" width="480" alt="Traffic Sign Data Samples" />
 
-####Visualization of the dataset
+#### Visualization of the dataset
 
 Here are some traffic sign image samples.
 
@@ -73,7 +73,7 @@ Here is the example.
 
 I randomly choose these techniques to extend each class to **15,000** images. The training dataset now has **645K** images (15,000 x 43).
 
-###3. Pre-processing
+### 3. Pre-processing
 
 I got the pre-processing idea from a [Udacity Discussion Post](https://discussions.udacity.com/t/train-valid-test-image-processing/401452/8) and [Sermanet and LeCun's paper](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf). I used the following steps of processing.
 
@@ -87,9 +87,9 @@ Here are the processing results after each step.
 
 I found the pre-processing techniques very helpful to train the model.
 
-###4. Model Architecture
+### 4. Model Architecture
 
-####Summary
+#### Summary
 * I used 3 different models for the traffic sign classifier: LeNet5, LeNet5 + Dropouts, and Sermanet.
 * With the extended dataset and LeNet5, I got 95.0% for validation accuracy and 94.3% for test accuracy respectively. 
 * Then I tried to add 4 Dropouts in each convolution layers and fully connected layers. I set the keep rates to 0.9, 0.8, 0.7 and 0.5. And also, I added more filters in each layer.
@@ -103,9 +103,9 @@ I found the pre-processing techniques very helpful to train the model.
 * Inspired by [Sermanet and LeCun's paper](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf), I created a 2 convolution layers Sermanet. The major idea is that both 2 convolution layers outputs will be fed into the fully connected layer (multi-scale features).
 <img src="output/sermanet.png" width="480" alt="Image Transformation" />
 
-####The Models
+#### The Models
  
-#####Model 1 - LeNet5
+##### Model 1 - LeNet5
 
 | Layer         		|     Description	    | 
 |:-----------------:|:---------------------:| 
@@ -123,7 +123,7 @@ I found the pre-processing techniques very helpful to train the model.
 | RELU					|						|
 | Fully connected	| outputs 43			|
 
-#####Model 2 - LeNet5 + Dropouts
+##### Model 2 - LeNet5 + Dropouts
 
 | Layer         		|     Description	    | 
 |:-----------------:|:---------------------:| 
@@ -145,7 +145,7 @@ I found the pre-processing techniques very helpful to train the model.
 | Dropout				| Keep = 0.5			|
 | Fully connected	| outputs 43			|
 
-#####Model 3 - Sermanet (Multi-Scale Features) - 2 convolution layers
+##### Model 3 - Sermanet (Multi-Scale Features) - 2 convolution layers
 
 | Layer         		|     Description	        | 
 |:---------------------:|:---------------------:| 
@@ -164,7 +164,7 @@ I found the pre-processing techniques very helpful to train the model.
 | Dropout				| Keep = 0.5			|
 | Fully connected	| outputs 43			|
 
-###5. Train the model
+### 5. Train the model
 
 #### Hyperparameters
 * **Epoches:** 80~120
@@ -190,17 +190,17 @@ I used 2-stage training to train and fine tune the model.
 * **DO NOT** call tf.global_variables_initializer() at the stage 2 when use loaded model to continue training.
 
 
+#### Performance
 
-####Performance
-| Model         		|Training Accuracy| Validation Accuracy| Test Accuracy | 
-|:-----------------:|:------------------:|:-----------------:|:------------------:| 
+| Model|Training Accuracy| Validation Accuracy| Test Accuracy | 
+|:-----:|:---------:|:-----------:|:------------:| 
 | LeNet5        		| 99.9%		| 95.0%|94.3%|
 | LeNet5 + Dropouts | 99.9%		|99.2% |98.3%|
 | Sermanet (Multi-Scale Features)	|	99.9%| 98.5%|97.1%|
 
 According to [Sermanet and LeCun's paper](http://yann.lecun.com/exdb/publis/pdf/sermanet-ijcnn-11.pdf), Sermanet should have **99%+** test accuracy, because of using multi-scale features. However I got slightly worse performance (compared to LeNet5 + Dropouts), I am still working on that. 
 
-###6. Test a Model on New Images
+### 6. Test a Model on New Images
 
 I used the Sermanet model (supposed to have the best performance) to test on new images.  
 
@@ -275,8 +275,7 @@ I got 5 correct out of 5 (100%). Here are the results:
 | 0.00001				    | Beware of ice/snow |
 
 
-
-###7. (Optional) Visualizing the Neural Network 
+### 7. (Optional) Visualizing the Neural Network 
 
 #### First convolution layer's output (16 filters)
 <img src="output/conv1.png" width="640" alt="Image Transformation" />
