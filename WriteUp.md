@@ -87,6 +87,10 @@ Here are the processing results after each step.
 
 I found the pre-processing techniques very helpful to train the model.
 
+**Update After Review**
+
+The reason I only used channel Y instead of RGB is beacause I found using RGB didn't bring much good for accuracy but only much more computational workload. (I might want to re-consider this).
+
 ### 4. Model Architecture
 
 #### Summary
@@ -224,7 +228,14 @@ I got 5 correct out of 5 (100%). Here are the results:
 
 #### Top 5 probabilities for each image
 
-<img src="output/s01-vechiles.jpg" width="64" alt="vechiles" />
+**(Update After Review)**
+
+##### Image 1: Vechiles
+
+For the first image contains the sign of "Vechiles over 3.5 metric tons prohibited", the model classifies it right, and is pretty certain - with probability of 99.997%.
+
+<img src="output/s01-vechiles.jpg" width="128" alt="vechiles" />
+<img src="output/bar_1.png" width="128" alt="vechiles" />
 
 | Probability         	|     Prediction	        | 
 |:---------------------:|:------------------------------:| 
@@ -234,7 +245,12 @@ I got 5 correct out of 5 (100%). Here are the results:
 | 0.00000	      			| No passing		|
 | 0.00000				    | Speed limit (100km/h)   |
 
-<img src="output/s02-stop.jpg" width="64" alt="Stop" />
+##### Image 2: Stop
+
+For the second image contains the sign of "Stop", the model classifies it right, and is pretty certain - with probability of 100%.
+
+<img src="output/s02-stop.jpg" width="128" alt="Stop" />
+<img src="output/bar_2.png" width="128" alt="Stop" />
 
 | Probability         	|     Prediction	        | 
 |:---------------------:|:---------------------------------------------:| 
@@ -244,7 +260,14 @@ I got 5 correct out of 5 (100%). Here are the results:
 | 0.00000	      			| Speed limit (80km/h)|
 | 0.00000				    | Keep right   |
 
-<img src="output/s03-Pedestrians.jpg" width="64" alt="Pedestrians" />
+##### Image 3: Pedestrians
+
+For the third image which contains the sign of "Pedestrians", the model classifies it right, and is pretty certain - with probability of 99.98%.
+
+
+<img src="output/s03-Pedestrians.jpg" width="128" alt="Pedestrians" />
+<img src="output/bar_3.png" width="128" alt="Pedestrians" />
+
 
 | Probability         	|     Prediction	        | 
 |:---------------------:|:---------------------------------------------:| 
@@ -254,7 +277,12 @@ I got 5 correct out of 5 (100%). Here are the results:
 | 0.00000     				| Road narrows on the right |
 | 0.00000				    | Road work   |
 
-<img src="output/s04-child.jpg" width="64" alt="Children crossing" />
+##### Image 4: Children crossing
+
+For the fourth image contains the sign of "Children crossing", the model classifies it right, and is pretty certain - with probability of 88.68%.
+
+<img src="output/s04-child.jpg" width="128" alt="Children crossing" />
+<img src="output/bar_4.png" width="128" alt="Children crossing" />
 
 | Probability         	|     Prediction	        | 
 |:---------------------:|:---------------------------------------------:| 
@@ -264,7 +292,12 @@ I got 5 correct out of 5 (100%). Here are the results:
 | 0.00981	      			| Road work|
 | 0.00891				    | Speed limit (80km/h)   |
 
-<img src="output/s05-roadwork.jpg" width="64" alt="Road work" />
+##### Image 5: Road work
+
+For the fifth image contains the sign of "Road work", the model classifies it right, and is pretty certain - with probability of 99.54%.
+
+<img src="output/s05-roadwork.jpg" width="128" alt="Road work" />
+<img src="output/bar_5.png" width="128" alt="Road work" />
 
 | Probability         	|     Prediction	        | 
 |:---------------------:|:---------------------------------------------:| 
@@ -275,7 +308,30 @@ I got 5 correct out of 5 (100%). Here are the results:
 | 0.00001				    | Beware of ice/snow |
 
 
+#### Discussion (Update After Review)
+
+* The first 3 images are relatively easy for the model to classify, because they are pretty clear, up front and no distortion or anything. The model has been trained with many images like this, and the model is very certain about the result (close to 100%).
+
+* The fourth image (children crossing) is a chanllege, because it is not taken from the up front(it's from lower position). The original traninng dataset doesn't have much samples of this kind. Using projection and rotation technique to extend the training data helps a lot in this scenario, the model correctly classifies this image.
+
+* The fifth image (road work) is also a difficult one. It is taken from night, and also partialy covered by snow. I specially checked that the training data has 1350 "road work" image under various conditions, and after extended by several augmentation techniques, the model learned a lot about the "Road work" sign, so it also correctly classifies the image.
+Here are some samples of "Road work" training data.
+
+<img src="output/roadwork_data.png" width="640" alt="Image Transformation" />
+
+* To better understand the performance of my model, I checked the images in test data the model couldn't claasify correctly. To clarify, most of the images either have shadows, blocking objects, or too dark or blurry. According to reviewer's feedback, I would consider generate images with more noise to train the model, and some sort of color information may also helpful. 
+
+Here are some examples the model couldn't classify correctly.
+
+**Original**
+<img src="output/wrong_predictions.png" width="640" alt="Original" />
+
+**Preprocessed**
+<img src="output/wrong_predictions_gray.png" width="640" alt="Preprocessed" />
+
 ### 7. (Optional) Visualizing the Neural Network 
+
+Here is to visualize the **Sermanet** which has 2 convolution layers. 
 
 #### First convolution layer's output (16 filters)
 <img src="output/conv1.png" width="640" alt="Image Transformation" />
