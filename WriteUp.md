@@ -324,9 +324,11 @@ Here are some samples of "Road work" training data.
 Here are some examples the model couldn't classify correctly.
 
 **Original**
+
 <img src="output/wrong_predictions.png" width="640" alt="Original" />
 
 **Preprocessed**
+
 <img src="output/wrong_predictions_gray.png" width="640" alt="Preprocessed" />
 
 ### 7. (Optional) Visualizing the Neural Network 
